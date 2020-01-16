@@ -1,0 +1,17 @@
+DELIMITER //
+CREATE OR REPLACE PROCEDURE check_valid(low_bound BIGINT, high_bound BIGINT) AS
+DECLARE
+	g QUERY(num VARCHAR(16)) = SELECT number FROM card_number WHERE id >= low_bound AND id <= high_bound;
+	n ARRAY(RECORD(num VARCHAR(16)));
+	card_num VARCHAR(16);
+BEGIN
+	n = collect(g);
+	FOR i in 0..(LENGTH(n) - 1) LOOP
+		card_num = n[i].num;
+		UPDATE card_number SET valid_state = check_luhn(card_num) WHERE number = card_num;
+	END LOOP;
+
+	-- ECHO SELECT number FROM card_number WHERE valid_state = "Valid";
+	-- ECHO SELECT LENGTH(n);
+END //
+DELIMITER ;

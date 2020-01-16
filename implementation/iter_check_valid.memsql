@@ -1,0 +1,15 @@
+DELIMITER //
+CREATE OR REPLACE PROCEDURE iter_check_valid() AS
+DECLARE
+	g QUERY(number BIGINT) = SELECT COUNT(*) FROM card_number;
+	num ARRAY(RECORD(number BIGINT));
+	iteractions BIGINT;
+BEGIN
+	num = collect(g);
+	iteractions = num[0].number / 100000;
+	FOR i in 1..iteractions LOOP
+		CALL check_valid(100000*(i - 1)+1, 100000*i);
+	END LOOP;
+	CALL check_valid(1000001, 1000001);
+END //
+DELIMITER ;

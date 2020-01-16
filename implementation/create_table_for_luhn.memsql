@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS credit_card ;
+USE credit_card;
+
+DROP TABLE IF EXISTS card_number;
+CREATE TABLE card_number (
+	ID BIGINT NOT NULL PRIMARY KEY,
+	number VARCHAR(16) NOT NULL,
+	valid_state VARCHAR(7)
+);

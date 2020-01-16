@@ -1,0 +1,36 @@
+DELIMITER //
+CREATE OR REPLACE FUNCTION check_luhn(s VARCHAR(16))
+	RETURNS VARCHAR(7) AS
+DECLARE
+	number INT = 0;
+	the_sum INT = 0;
+	j INT = 0;
+	flag INT = 1;
+	return_str VARCHAR(7);
+BEGIN
+	flag = 1;
+	FOR i in 0..(LENGTH(s) - 1) LOOP
+		j = (-1) * (i+1);
+		number = SUBSTR(s, j, 1);
+		IF flag < 0 THEN
+			number *= 2;
+			IF number > 9 THEN
+				number -= 9;
+			END IF;
+		END IF;
+
+		the_sum += number;
+		flag *= -1;
+	END LOOP;
+
+	IF the_sum % 10 = 0 THEN
+		return_str = "Valid";
+		RETURN "Valid";
+	ELSE
+		return_str = "Invalid";
+		RETURN "Invalid";
+	END IF; 
+	
+	-- RETURN return_str;
+END //
+DELIMITER ;

@@ -1,0 +1,37 @@
+DELIMITER //
+CREATE OR REPLACE PROCEDURE debug_check_luhn(s VARCHAR(16)) AS
+DECLARE
+	number INT = 0;
+	the_sum INT = 0;
+	j INT = 0;
+	flag INT = 1;
+	return_str VARCHAR(7);
+BEGIN
+	flag = 1;
+	FOR i in 0..(LENGTH(s) - 1) LOOP
+		j = (-1) * (i+1);
+		number = SUBSTR(s, j, 1);
+		INSERT INTO debug_table(ID, arr_before, arr_after, the_flag, state) VALUE(LENGTH(s)-i, number, NULL, NULL, NULL);
+		IF flag < 0 THEN
+			number *= 2;
+			IF number > 9 THEN
+				number -= 9;
+			END IF;
+		END IF;
+		-- print out the array
+		UPDATE debug_table SET arr_after = number, the_flag = flag WHERE ID = LENGTH(s)-i;
+		the_sum += number;
+		flag *= -1;
+	END LOOP;
+	INSERT INTO debug_table(ID, arr_before, arr_after, the_flag, state) VALUE(17, NULL, the_sum, NULL, NULL);
+	IF the_sum % 10 = 0 THEN
+		return_str = "Valid";
+	ELSE
+		return_str = "Invalid";
+	END IF;
+	INSERT INTO debug_table(ID, arr_before, arr_after, the_flag, state) VALUE(18, NULL, NULL, NULL, return_str);
+
+END //
+DELIMITER ;
+
+SELECT * FROM debug_table ORDER BY(ID) ASC;

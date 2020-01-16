@@ -1,0 +1,8 @@
+USE credit_card;
+CREATE TABLE debug_table (
+	ID INT NOT NULL,
+	arr_before INT,
+	arr_after INT,
+	the_flag INT,
+	state VARCHAR(7)
+);
